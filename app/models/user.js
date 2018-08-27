@@ -10,20 +10,32 @@ var User = db.Model.extend({
   links: function() {
     return this.hasMany(Link);
   },
-  initialize: function(userData) {
-    let unhashedPassword = userData.password;
-    let username = userData.username;
-    let salt = null;
-
-    console.log('testArguments: ', testArguments);
-    this.on('creating', function(model, attrs, options) {
-      let shasum = crypto.createHash('sha1');
-      shasum.update(model.get('password'));
-      model.set('password', shasum.digest('hex').slice(0, 5));
-
-      
-      model.set('username', username);
-      model.set('salt', salt);
+  initialize: function(userCredentials) {
+    let unhashedPassword = userCredentials.password;
+    let username = userCredentials.username;
+    
+    this.on('creating', (model, attrs, options) => {
+      bcrypt.genSalt(10, (err, salt) => {
+        if (err) {
+          console.log('Error in generating password salt -- ', err);
+        } else {
+          var cb = (err, hash) => {
+            console.log('in bcrypt.hash before if/else');
+            if (err) {
+              console.log('Error in generating hashed password -- ', err);
+            } else {
+              console.log('in bcrypt.genSalt else');
+              model.set('password', hash);
+              model.set('salt', salt);
+              model.set('username', username);
+            }
+          };
+          (salt) => {
+            bcrypt.hash(unhashedPassword, salt, cb);
+          };
+        }
+        
+      });      
     });
   },
 
