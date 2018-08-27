@@ -2,6 +2,7 @@ var express = require('express');
 var util = require('./lib/utility');
 var partials = require('express-partials');
 var bodyParser = require('body-parser');
+var bcrypt = require('bcrypt-nodejs');
 
 
 var db = require('./app/config');
@@ -91,27 +92,54 @@ app.get('/signup', (req, res) => {
 app.post('/signup', (req, res) => {
   let password = req.body.password;
   let username = req.body.username;
+  
   if (!password || !username) {
     console.log('/signup POST: Either password or username are null.');
     res.sendStatus(418).end();
   }
-  new User({ password: password, username: username }).fetch().then((found) => {
-    if (found) {
-      console.log('/signup POST: user already exists');
-      res.sendStatus(418).end();
+
+  bcrypt.hash(password, 10, (err, hash) => {
+    console.log('in bcrypt.hash before if/else', password, hash);
+    if (err) {
+      console.log('Error in generating hashed password -- ', err);
     } else {
-      Users.create({
-        username: username,
-        password: password
-      })
-        .then((newUser) => {
-          res.redirect('/login');
-        });
+      console.log('in bcyrpt.hash else');
+      console.log('in anonymous function');
+      // query db instead of collection
+      new User({ password: hash, username: username }).fetch().then((found) => {
+        console.log('in New User: ', hash, username);
+        if (found) {
+          console.log('/signup POST: user already exists');
+          res.sendStatus(418).end();
+        } else {
+          console.log('in new user fetch blah');
+          Users.create({
+            username: username,
+            password: password
+          })
+            .then((newUser) => {
+              res.redirect('/login');
+            });
+        }
+      });
     }
   });
 
-});
 
+//   bcrypt.genSalt(10, (err, salt) => {
+//     console.log('in genSalt', salt);
+//     if (err) {
+//       console.log('Error in generating password salt -- ', err);
+//     } else {
+//       console.log('in bcrypt.genSalt else');
+      
+//     }
+
+//   });
+
+
+// 
+});
 
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail
