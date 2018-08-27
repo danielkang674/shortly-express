@@ -25,6 +25,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', 
 function(req, res) {
+  // check authentication of user sending request
   res.render('index');
 });
 
@@ -75,7 +76,28 @@ function(req, res) {
 /************************************************************/
 // Write your authentication routes here
 /************************************************************/
+app.get('/login', (req, res) => {
+  res.render('login');
+});
 
+app.post('/login', (req, res) => {
+
+});
+
+app.get('/signup', (req, res) => {
+  res.render('signup');
+});
+
+app.post('/signup', (req, res) => {
+  // check if user exists
+  //   if so, 
+  //     sendStatus(40*)
+  //   else
+  //     store new user in DB
+  //       hashing password
+  //       generate salt
+  
+});
 
 
 /************************************************************/
