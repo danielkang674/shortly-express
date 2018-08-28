@@ -121,9 +121,11 @@ app.post('/login', (req, res) => {
       res.redirect('/signup');
     }
   });
-    
-  
+});
 
+app.get('/logout', (req, res) => {
+  req.session.loggedIn = false;
+  res.redirect('/login');
 });
 
 app.get('/signup', (req, res) => {
