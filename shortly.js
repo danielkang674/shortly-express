@@ -3,6 +3,7 @@ var util = require('./lib/utility');
 var partials = require('express-partials');
 var bodyParser = require('body-parser');
 var bcrypt = require('bcrypt-nodejs');
+var sessions = require('express-session');
 
 
 var db = require('./app/config');
@@ -22,11 +23,14 @@ app.use(bodyParser.json());
 // Parse forms (signup/login)
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
+app.use(sessions({secret: 'abcd'}));
 
 
 app.get('/',
   function (req, res) {
     // check authentication of user sending request
+    //checkUser();
+    console.log(req.session);
     res.render('index');
   });
 
@@ -98,7 +102,6 @@ app.post('/signup', (req, res) => {
     res.sendStatus(418).end();
   }
 
-
   bcrypt.genSalt(5, (err, salt) => {
     bcrypt.hash(password, salt, null, (err, hash) => {
       if (err) {
@@ -116,6 +119,7 @@ app.post('/signup', (req, res) => {
             })
               .then((newUser) => {
                 // session saved and log in user
+                // checkUser(newUser);
                 res.redirect('/');
               });
           }
