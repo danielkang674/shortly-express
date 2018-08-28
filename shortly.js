@@ -30,7 +30,6 @@ app.get('/',
   function (req, res) {
     // check authentication of user sending request
     //checkUser();
-    console.log(req.session);
     res.render('index');
   });
 
@@ -86,7 +85,9 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-
+  // if successful login
+  // req.sessions.username
+  // helper function will always check req.sessions.username
 });
 
 app.get('/signup', (req, res) => {
