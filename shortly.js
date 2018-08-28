@@ -92,53 +92,38 @@ app.get('/signup', (req, res) => {
 app.post('/signup', (req, res) => {
   let password = req.body.password;
   let username = req.body.username;
-  
+
   if (!password || !username) {
     console.log('/signup POST: Either password or username are null.');
     res.sendStatus(418).end();
   }
 
-  bcrypt.hash(password, 10, (err, hash) => {
-    console.log('in bcrypt.hash before if/else', password, hash);
-    if (err) {
-      console.log('Error in generating hashed password -- ', err);
-    } else {
-      console.log('in bcyrpt.hash else');
-      console.log('in anonymous function');
-      // query db instead of collection
-      new User({ password: hash, username: username }).fetch().then((found) => {
-        console.log('in New User: ', hash, username);
-        if (found) {
-          console.log('/signup POST: user already exists');
-          res.sendStatus(418).end();
-        } else {
-          console.log('in new user fetch blah');
-          Users.create({
-            username: username,
-            password: password
-          })
-            .then((newUser) => {
-              res.redirect('/login');
-            });
-        }
-      });
-    }
+
+  bcrypt.genSalt(5, (err, salt) => {
+    bcrypt.hash(password, salt, null, (err, hash) => {
+      if (err) {
+        console.log('Error in generating hashed password -- ', err);
+      } else {
+        // query db instead of collection
+        new User({ username: username }).fetch().then((found) => {
+          if (found) {
+            console.log('/signup POST: user already exists');
+            res.sendStatus(418).end();
+          } else {
+            Users.create({
+              username: username,
+              password: hash
+            })
+              .then((newUser) => {
+                // session saved and log in user
+                res.redirect('/');
+              });
+          }
+        });
+      }
+    });
   });
 
-
-//   bcrypt.genSalt(10, (err, salt) => {
-//     console.log('in genSalt', salt);
-//     if (err) {
-//       console.log('Error in generating password salt -- ', err);
-//     } else {
-//       console.log('in bcrypt.genSalt else');
-      
-//     }
-
-//   });
-
-
-// 
 });
 
 /************************************************************/

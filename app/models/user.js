@@ -15,7 +15,6 @@ var User = db.Model.extend({
     let username = userCredentials.username;
     
     this.on('creating', (model, attrs, options) => {
-      console.log('in creating', model, attrs, options);
             
     });
   },
