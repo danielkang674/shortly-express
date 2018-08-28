@@ -4,6 +4,7 @@ var partials = require('express-partials');
 var bodyParser = require('body-parser');
 var bcrypt = require('bcrypt-nodejs');
 var sessions = require('express-session');
+var fs = require('fs');
 
 
 var db = require('./app/config');
@@ -118,7 +119,7 @@ app.post('/login', (req, res) => {
         }
       });
     } else {
-      res.redirect('/signup');
+      res.redirect('/login');
     }
   });
 });

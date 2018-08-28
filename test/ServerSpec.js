@@ -72,29 +72,43 @@ describe('', function() {
       });
   });
 
-  xdescribe('Link creation:', function() {
+  describe('Link creation:', function() {
 
     var requestWithSession = request.defaults({jar: true});
 
     beforeEach(function(done) {
       // create a user that we can then log-in with
-      new User({
-        'username': 'Phillip',
-        'password': 'Phillip'
-      }).save().then(function() {
-        var options = {
-          'method': 'POST',
-          'followAllRedirects': true,
-          'uri': 'http://127.0.0.1:4568/login',
-          'json': {
-            'username': 'Phillip',
-            'password': 'Phillip'
-          }
-        };
-        // login via form and save session info
-        requestWithSession(options, function(error, res, body) {
-          done();
-        });
+      // new User({
+      //   'username': 'Phillip',
+      //   'password': 'Phillip'
+      // }).save().then(function() {
+      //   var options = {
+      //     'method': 'POST',
+      //     'followAllRedirects': true,
+      //     'uri': 'http://127.0.0.1:4568/login',
+      //     'json': {
+      //       'username': 'Phillip',
+      //       'password': 'Phillip'
+      //     }
+      //   };
+      //   // login via form and save session info
+      //   requestWithSession(options, function(error, res, body) {
+      //     done();
+      //   });
+      // });
+      
+      var options = {
+        'method': 'POST',
+        'followAllRedirects': true,
+        'uri': 'http://127.0.0.1:4568/signup',
+        'json': {
+          'username': 'Phillip',
+          'password': 'Phillip'
+        }
+      };
+      // login via form and save session info
+      requestWithSession(options, function(error, res, body) {
+        done();
       });
     });
 
@@ -114,7 +128,7 @@ describe('', function() {
       });
     });
 
-    xdescribe('Shortening links:', function() {
+    describe('Shortening links:', function() {
 
       var options = {
         'method': 'POST',
@@ -163,7 +177,7 @@ describe('', function() {
 
     }); // 'Shortening links'
 
-    xdescribe('With previously saved urls:', function() {
+    describe('With previously saved urls:', function() {
 
       var link;
 
@@ -226,7 +240,7 @@ describe('', function() {
 
   }); // 'Link creation'
 
-  xdescribe('Privileged Access:', function() {
+  describe('Privileged Access:', function() {
 
     it('Redirects to login page if a user tries to access the main page and is not signed in', function(done) {
       request('http://127.0.0.1:4568/', function(error, res, body) {
@@ -304,12 +318,25 @@ describe('', function() {
     var requestWithSession = request.defaults({jar: true});
 
     beforeEach(function(done) {
-      new User({
-        'username': 'Phillip',
-        'password': 'Phillip'
-      }).save().then(function() {
+      var options = {
+        'method': 'POST',
+        'uri': 'http://127.0.0.1:4568/signup',
+        'json': {
+          'username': 'Phillip',
+          'password': 'Phillip'
+        }
+      };
+
+      request(options, function(error, res, body) {
         done();
       });
+      
+      // new User({
+      //   'username': 'Phillip',
+      //   'password': 'Phillip'
+      // }).save().then(function() {
+      //   done();
+      // });
     });
 
     it('Logs in existing users', function(done) {
